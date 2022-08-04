@@ -26,6 +26,17 @@ class Alarm {
   AlarmStatus status = AlarmStatus.on;
   AlarmFrequency frequency;
   TimeOfDay time;
+  bool isExpanded = false;
 
   Alarm(this.name, this.frequency, this.time);
+
+  ExpansionPanel getWidget() {
+    return ExpansionPanel(
+        headerBuilder: (BuildContext context, bool isExpanded) {
+          return Container();
+        },
+        body: Container(),
+      isExpanded: isExpanded,
+    );
+  }
 }

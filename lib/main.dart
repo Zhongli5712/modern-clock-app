@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modern_clock_app/alarm_list.dart';
 import 'constants.dart';
 
 void main() {
@@ -8,11 +9,13 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  static const String _title = 'Modern Clock';
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: _title,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -25,7 +28,11 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: Scaffold(
+        appBar: AppBar(title: const Text(_title)),
+        body: const AlarmListWidget(),
+      ),
     );
   }
 }

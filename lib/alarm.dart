@@ -3,22 +3,30 @@ import 'package:flutter/material.dart';
 enum AlarmStatus { on, off }
 
 class AlarmFrequency {
-  final bool monday;
-  final bool tuesday;
-  final bool wednesday;
-  final bool thursday;
-  final bool friday;
-  final bool saturday;
-  final bool sunday;
+  static const dayOfWeekNames = [
+    "Monday", "Tuesday", "Wednesday",
+    "Thursday", "Friday", "Saturday", "Sunday"
+  ];
+  static const dayOfWeekShortNames = [
+    "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+  ];
 
+  final List<bool> frequency;
+
+  const AlarmFrequency(this.frequency);
   const AlarmFrequency.noRepeat()
-      : monday = false,
-        tuesday = false,
-        wednesday = false,
-        thursday = false,
-        friday = false,
-        saturday = false,
-        sunday = false;
+      : frequency = const [false, false, false, false, false, false, false];
+
+  @override
+  String toString() {
+    return frequency
+        .where((f) => f)
+        .toList()
+        .asMap()
+        .entries
+        .map((e) => dayOfWeekShortNames[e.key])
+        .join(", ");
+  }
 }
 
 class Alarm {
@@ -26,17 +34,41 @@ class Alarm {
   AlarmStatus status = AlarmStatus.on;
   AlarmFrequency frequency;
   TimeOfDay time;
-  bool isExpanded = false;
 
   Alarm(this.name, this.frequency, this.time);
+}
 
-  ExpansionPanel getWidget() {
-    return ExpansionPanel(
-        headerBuilder: (BuildContext context, bool isExpanded) {
-          return Container();
-        },
-        body: Container(),
-      isExpanded: isExpanded,
+class AlarmWidget extends StatefulWidget {
+  const AlarmWidget({Key? key, required this.alarm}) : super(key: key);
+
+  final Alarm alarm;
+
+  @override
+  State<StatefulWidget> createState() => _AlarmWidgetState();
+}
+
+class _AlarmWidgetState extends State<AlarmWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Column(
+          children: [
+            Text(widget.alarm.name),
+            Text(widget.alarm.time.toString()),
+            Text(widget.alarm.frequency.toString()),
+          ],
+        ),
+        Switch(
+          onChanged: (bool value) {
+            setState(() {
+            widget.alarm.status = value ? AlarmStatus.on : AlarmStatus.off;
+            });
+          },
+          value: widget.alarm.status == AlarmStatus.on ? true : false,
+        ),
+      ],
     );
   }
+
 }

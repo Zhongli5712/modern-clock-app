@@ -4,8 +4,11 @@ import 'alarm.dart';
 /// Generate a number of Alarms for testing purpose.
 List<Alarm> generateAlarms(int numAlarms) {
   return List<Alarm>.generate(numAlarms, (int index) {
-    return Alarm(index.toString(), const AlarmFrequency.noRepeat(),
-        TimeOfDay(hour: index, minute: 0));
+    return Alarm(
+      index.toString(),
+      TimeOfDay(hour: index, minute: 0),
+      const AlarmFrequency.noRepeat()
+    );
   });
 }
 

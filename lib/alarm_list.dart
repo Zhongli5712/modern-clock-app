@@ -7,7 +7,7 @@ List<Alarm> generateAlarms(int numAlarms) {
     return Alarm(
       index.toString(),
       TimeOfDay(hour: index, minute: 0),
-      const AlarmFrequency.noRepeat()
+      AlarmFrequency.noRepeat()
     );
   });
 }
@@ -20,7 +20,7 @@ class AlarmListWidget extends StatefulWidget {
 }
 
 class _AlarmListState extends State<AlarmListWidget> {
-  final List<Alarm> _alarms = generateAlarms(5);
+  List<Alarm> _alarms = generateAlarms(5);
 
   @override
   Widget build(BuildContext context) {

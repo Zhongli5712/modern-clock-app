@@ -21,23 +21,24 @@ class AlarmFrequency {
     "Sun"
   ];
 
-  final List<bool> frequency;
+  List<bool> frequency;
 
-  const AlarmFrequency(this.frequency);
-  const AlarmFrequency.noRepeat()
-      : frequency = const [false, false, false, false, false, false, false];
+  AlarmFrequency.from(AlarmFrequency af)
+      : frequency = List.from(af.frequency);
+  AlarmFrequency.noRepeat()
+      : frequency = [false, false, false, false, false, false, false];
 
   @override
   String toString() {
-    String ret = frequency
-                    .where((f) => f)
+    String ret = [for (var i = 0; i < 7; i++) i]
+                    .map((i) => frequency[i] ? dayOfWeekShortNames[i] : "")
+                    .where((e) => e != "")
                     .toList()
-                    .asMap()
-                    .entries
-                    .map((e) => dayOfWeekShortNames[e.key])
                     .join(", ");
     if (ret.isEmpty) {
       return "No repeat";
+    } else if (ret == "Mon, Tue, Wed, Thu, Fri, Sat, Sun") {
+      return "Everyday";
     }
     return ret;
   }
@@ -62,9 +63,18 @@ class Alarm {
     : name = a.name,
       time = a.time,
       isOn = a.isOn,
-      frequency = a.frequency,
+      frequency = AlarmFrequency.from(a.frequency),
       vibrate = a.vibrate,
       sound = a.sound;
+
+  void copy(Alarm a) {
+    name = a.name;
+    time = a.time;
+    isOn = a.isOn;
+    frequency = AlarmFrequency.from(a.frequency);
+    vibrate = a.vibrate;
+    sound = a.sound;
+  }
 
   String getTimeString() {
     return '${time.hour}:${time.minute}';
@@ -109,43 +119,14 @@ class _AlarmWidgetState extends State<AlarmWidget> {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        Alarm tmp = Alarm.from(widget.alarm);
-                        return AlertDialog(
-                          scrollable: true,
-                          content: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Form(
-                              child: Column(
-                                children: [
-                                  TextFormField(
-                                    decoration: InputDecoration(
-                                      labelText: tmp.name,
-                                      icon: const Icon(Icons.label),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      showTimePicker(
-                                        context: context,
-                                        initialTime: tmp.time);
-                                    },
-                                    child: Text(tmp.getTimeString()))
-                                ],
-                              ),
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              child: const Text("CANCEL"),
-                              onPressed: () => Navigator.pop(context)
-                            ),
-                            TextButton(
-                              child: const Text("APPLY"),
-                              onPressed: () => Navigator.pop(context, tmp)
-                            )
-                          ],
-                        );
-                      });
+                        return AlarmSettingsWidget(tmpAlarm: Alarm.from(widget.alarm));
+                      }).then((newAlarm){
+                        setState(() {
+                          if (newAlarm != null) {
+                            widget.alarm.copy(newAlarm);
+                          }
+                        });
+                    });
                   },
                   icon: const Icon(Icons.settings)
                 ),
@@ -163,7 +144,10 @@ class _AlarmWidgetState extends State<AlarmWidget> {
 }
 
 class AlarmSettingsWidget extends StatefulWidget {
-  const AlarmSettingsWidget({Key? key}) : super(key: key);
+  const AlarmSettingsWidget({Key? key, required this.tmpAlarm})
+        : super(key: key);
+
+  final Alarm tmpAlarm;
 
   @override
   State<AlarmSettingsWidget> createState() => _AlarmSettingsWidgetState();
@@ -172,6 +156,89 @@ class AlarmSettingsWidget extends StatefulWidget {
 class _AlarmSettingsWidgetState extends State<AlarmSettingsWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      elevation: 0,
+      backgroundColor: Colors.grey,
+      child: contentBox(context),
+    );
+  }
+
+  generateFrequencyButtons() {
+    return [for (var i = 0; i < 7; i++) i].map(
+      (i) => SizedBox(
+          width: 35,
+          child: MaterialButton(
+            onPressed: () {
+              setState(() {
+                widget.tmpAlarm.frequency.frequency[i] =
+                          !widget.tmpAlarm.frequency.frequency[i];
+              });
+            },
+            color: widget.tmpAlarm.frequency.frequency[i] ?
+                          Colors.blue : Colors.grey,
+            textColor: Colors.white,
+            // padding: const EdgeInsets.all(16),
+            shape: const CircleBorder(),
+            child: Text(AlarmFrequency.dayOfWeekShortNames[i][0]),
+          )
+        )
+      ).toList();
+  }
+
+  contentBox(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Form(
+        child: Column(
+          children: [
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: widget.tmpAlarm.name,
+                icon: const Icon(Icons.label),
+              ),
+            ),
+            TextButton(
+                onPressed: () {
+                  showTimePicker(
+                      context: context,
+                      initialTime: widget.tmpAlarm.time
+                  ).then((newTime) {
+                    setState(() {
+                      if (newTime != null) {
+                        widget.tmpAlarm.time = newTime;
+                      }
+                    });
+                  });
+                },
+                child: Text(widget.tmpAlarm.getTimeString())
+            ),
+            Text(widget.tmpAlarm.frequency.toString()),
+            ButtonBar(
+              alignment: MainAxisAlignment.spaceEvenly,
+              children: generateFrequencyButtons()
+            ),
+            Row(
+              children: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(null);
+                    },
+                    child: const Text("CANCEL")
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(widget.tmpAlarm);
+                    },
+                    child: const Text("APPLY")
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

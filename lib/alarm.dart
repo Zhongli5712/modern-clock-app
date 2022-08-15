@@ -224,7 +224,10 @@ class _AlarmSettingsWidgetState extends State<AlarmSettingsWidget> {
                     });
                   });
                 },
-                child: Text(widget.tmpAlarm.getTimeString())
+                child: Text(
+                    widget.tmpAlarm.getTimeString(),
+                    style: timeTextStyle,
+                )
             ),
             Text(widget.tmpAlarm.frequency.toString()),
             ButtonBar(

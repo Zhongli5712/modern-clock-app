@@ -49,7 +49,7 @@ class _AlarmListState extends State<AlarmListWidget> {
           });
         },
         backgroundColor: Colors.green,
-        child: const Icon(Icons.navigation)
+        child: const Icon(Icons.add_alarm_rounded)
       ),
       body: ListView.builder(
           padding: const EdgeInsets.all(8),

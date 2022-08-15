@@ -51,14 +51,15 @@ class AlarmSound {
 }
 
 class Alarm {
-  String name;
-  TimeOfDay time;
+  String name = "";
+  TimeOfDay time = TimeOfDay.now();
   bool isOn = false;
-  AlarmFrequency frequency;
+  AlarmFrequency frequency = AlarmFrequency.noRepeat();
   bool vibrate = true;
   AlarmSound sound = defaultAlarmSound;
 
   Alarm(this.name, this.time, this.frequency);
+  Alarm.empty();
   Alarm.from(Alarm a)
     : name = a.name,
       time = a.time,
@@ -195,10 +196,20 @@ class _AlarmSettingsWidgetState extends State<AlarmSettingsWidget> {
         child: Column(
           children: [
             TextFormField(
-              decoration: InputDecoration(
-                labelText: widget.tmpAlarm.name,
-                icon: const Icon(Icons.label),
+              initialValue: widget.tmpAlarm.name,
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                icon: Icon(Icons.label),
               ),
+              onChanged: (String? value) {
+                setState(() {
+                  if (value == null) {
+                    widget.tmpAlarm.name = "";
+                  } else {
+                    widget.tmpAlarm.name = value;
+                  }
+                });
+              },
             ),
             TextButton(
                 onPressed: () {

@@ -20,7 +20,7 @@ class AlarmListWidget extends StatefulWidget {
 }
 
 class _AlarmListState extends State<AlarmListWidget> {
-  List<Alarm> _alarms = generateAlarms(5);
+  List<Alarm> _alarms = generateAlarms(9);
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +30,34 @@ class _AlarmListState extends State<AlarmListWidget> {
   }
 
   Widget _buildPanel() {
-    return ListView(
-      padding: const EdgeInsets.all(8),
-      children: _alarms.map((alarm) => AlarmWidget(alarm: alarm)).toList(),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Alarms'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlarmSettingsWidget(tmpAlarm: Alarm.empty());
+              }).then((newAlarm){
+            setState(() {
+              if (newAlarm != null) {
+                _alarms.add(newAlarm);
+              }
+            });
+          });
+        },
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.navigation)
+      ),
+      body: ListView.builder(
+          padding: const EdgeInsets.all(8),
+          itemCount: _alarms.length,
+          itemBuilder: (BuildContext context, int index) {
+            return AlarmWidget(alarm: _alarms[index]);
+          },
+      ),
     );
   }
 }

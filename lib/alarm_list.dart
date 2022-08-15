@@ -48,7 +48,7 @@ class _AlarmListState extends State<AlarmListWidget> {
             });
           });
         },
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.blue,
         child: const Icon(Icons.add_alarm_rounded)
       ),
       body: ListView.builder(

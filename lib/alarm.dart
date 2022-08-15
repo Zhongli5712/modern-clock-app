@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_clock_app/constants.dart';
 
@@ -102,14 +103,21 @@ class _AlarmWidgetState extends State<AlarmWidget> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        margin: const EdgeInsets.all(10.0),
-        color: Colors.white38,
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white38,
+        ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Column(
               children: [
                 Text(widget.alarm.name),
-                Text(widget.alarm.getTimeString()),
+                Text(
+                  widget.alarm.getTimeString(),
+                  style: timeAlarmsListTextStyle,
+                ),
                 Text(widget.alarm.frequency.toString())
               ],
             ),
@@ -190,7 +198,9 @@ class _AlarmSettingsWidgetState extends State<AlarmSettingsWidget> {
   }
 
   contentBox(BuildContext context) {
-    return Padding(
+    return Container(
+      width: double.infinity,
+      height: 300,
       padding: const EdgeInsets.all(8.0),
       child: Form(
         child: Column(
@@ -226,27 +236,28 @@ class _AlarmSettingsWidgetState extends State<AlarmSettingsWidget> {
                 },
                 child: Text(
                     widget.tmpAlarm.getTimeString(),
-                    style: timeTextStyle,
+                    style: timeSettingsTextStyle,
                 )
             ),
             Text(widget.tmpAlarm.frequency.toString()),
             ButtonBar(
-              alignment: MainAxisAlignment.spaceEvenly,
+              alignment: MainAxisAlignment.spaceAround,
               children: generateFrequencyButtons()
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
                     onPressed: () {
                       Navigator.of(context).pop(null);
                     },
-                    child: const Text("CANCEL")
+                    child: Text("CANCEL", style: textButtonTextStyle),
                 ),
                 TextButton(
                     onPressed: () {
                       Navigator.of(context).pop(widget.tmpAlarm);
                     },
-                    child: const Text("APPLY")
+                    child: Text("APPLY", style: textButtonTextStyle,)
                 ),
               ],
             )

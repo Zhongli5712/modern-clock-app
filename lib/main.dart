@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
               label: "Alarm",
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.speed constant),
+            icon: Icon(Icons.speed),
             label: "Burst",
           ),
         ],
